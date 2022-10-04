@@ -49,18 +49,6 @@ namespace Azure_Workshop.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        public async Task<Transaction?> GetMessageTransaction()
-        {
-            var receiver  = _serviceBusClient.CreateReceiver("transactions");
-
-            var message = await receiver.ReceiveMessageAsync();
-
-            await receiver.CompleteMessageAsync(message);
-
-            return JsonSerializer.Deserialize<Transaction>(message.Body.ToString());
-        }
-
         private Transaction GetRandomTransaction(int index = 1)
         {
             return new Transaction

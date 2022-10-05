@@ -1,3 +1,5 @@
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
 using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,9 +11,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Configuration.AddAzureKeyVault(
+    new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+    new DefaultAzureCredential(),
+    new AzureKeyVaultConfigurationOptions());
+
 builder.Services.AddAzureClients(clientsBuilder =>
 {
-    clientsBuilder.AddServiceBusClient(builder.Configuration.GetConnectionString("ServiceBus"));
+    clientsBuilder.AddServiceBusClient(builder.Configuration["ServiceBus"]);
 });
 
 var app = builder.Build();

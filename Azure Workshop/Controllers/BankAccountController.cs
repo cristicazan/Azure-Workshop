@@ -1,5 +1,7 @@
 using Azure.Messaging.ServiceBus;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.Text.Json;
 
 namespace Azure_Workshop.Controllers
@@ -25,16 +27,31 @@ namespace Azure_Workshop.Controllers
         };
 
         private readonly ServiceBusClient _serviceBusClient;
+        private readonly BlobContainerClient _blobContainerClient;
 
-        public BankAccountController(ServiceBusClient serviceBusClient)
+        public BankAccountController(ServiceBusClient serviceBusClient, IConfiguration configuration)
         {
             _serviceBusClient = serviceBusClient;
+            _blobContainerClient = new BlobContainerClient(configuration.GetConnectionString("StorageAccount"), "transactions");
         }
 
         [HttpGet]
         public IEnumerable<Transaction> GetTransactions()
         {
             return Enumerable.Range(1, 10).Select(GetRandomTransaction).ToArray();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadTransactions(IFormFile file)
+        {
+            BlobClient blob = _blobContainerClient.GetBlobClient(file.FileName);
+
+            using (var stream = file.OpenReadStream())
+            {
+                await blob.UploadAsync(stream);
+            }
+
+            return Ok();
         }
 
         [HttpPost]

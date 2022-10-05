@@ -1,7 +1,7 @@
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
 using System.Text.Json;
 
 namespace Azure_Workshop.Controllers
@@ -28,16 +28,20 @@ namespace Azure_Workshop.Controllers
 
         private readonly ServiceBusClient _serviceBusClient;
         private readonly BlobContainerClient _blobContainerClient;
+        private readonly TelemetryClient _telemetryClient;
 
-        public BankAccountController(ServiceBusClient serviceBusClient, IConfiguration configuration)
+        public BankAccountController(ServiceBusClient serviceBusClient, IConfiguration configuration, TelemetryClient telemetryClient)
         {
             _serviceBusClient = serviceBusClient;
             _blobContainerClient = new BlobContainerClient(configuration.GetConnectionString("StorageAccount"), "transactions");
+            _telemetryClient = telemetryClient;
         }
 
         [HttpGet]
         public IEnumerable<Transaction> GetTransactions()
         {
+            _telemetryClient.TrackTrace("Hello from here");
+
             return Enumerable.Range(1, 10).Select(GetRandomTransaction).ToArray();
         }
 

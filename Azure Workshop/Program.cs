@@ -16,6 +16,11 @@ builder.Configuration.AddAzureKeyVault(
     new DefaultAzureCredential(),
     new AzureKeyVaultConfigurationOptions());
 
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = builder.Configuration["AppInsights"];
+});
+
 builder.Services.AddAzureClients(clientsBuilder =>
 {
     clientsBuilder.AddServiceBusClient(builder.Configuration["ServiceBus"]);

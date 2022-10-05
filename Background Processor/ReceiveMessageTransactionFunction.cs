@@ -1,5 +1,6 @@
 using Azure.Messaging.ServiceBus;
 using Azure_Workshop;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -14,11 +15,13 @@ namespace Background_Processor
     {
         private readonly ServiceBusClient _serviceBusClient;
         private readonly BackgroundProcessorDbContext _backgroundProcessorDb;
+        private readonly TelemetryClient _telemetryClient;
 
-        public ReceiveMessageTransactionFunction(ServiceBusClient serviceBusClient, BackgroundProcessorDbContext backgroundProcessorDbContext)
+        public ReceiveMessageTransactionFunction(ServiceBusClient serviceBusClient, BackgroundProcessorDbContext backgroundProcessorDbContext, TelemetryClient telemetryClient)
         {
             _serviceBusClient = serviceBusClient;
             _backgroundProcessorDb = backgroundProcessorDbContext;
+            _telemetryClient = telemetryClient;
         }
 
         [FunctionName("ReceiveMessageTransactionFunction")]
@@ -27,6 +30,8 @@ namespace Background_Processor
             ILogger log)
         {
             var receiver = _serviceBusClient.CreateReceiver("transactions");
+
+            _telemetryClient.TrackTrace("Hello from the function");
 
             var message = await receiver.ReceiveMessageAsync();
 

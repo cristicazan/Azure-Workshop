@@ -21,6 +21,11 @@ namespace Background_Processor
                 clientsBuilder.AddServiceBusClient(configuration["ServiceBus"]);
             });
 
+            builder.Services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ConnectionString = configuration["AppInsights"];
+            });
+
             builder.Services.AddDbContext<BackgroundProcessorDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("SQL")));
         }

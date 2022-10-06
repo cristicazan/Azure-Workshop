@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure_Workshop;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Background_Processor
 {
-    public class BackgroundProcessorDbContextFactory : IDesignTimeDbContextFactory<BackgroundProcessorDbContext>
+    public class BankDbContextFactory : IDesignTimeDbContextFactory<BankDbContext>
     {
-        public BackgroundProcessorDbContext CreateDbContext(string[] args)
+        public BankDbContext CreateDbContext(string[] args)
         {
             var configurations = new ConfigurationBuilder()
                     .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
@@ -21,10 +22,10 @@ namespace Background_Processor
                     .AddEnvironmentVariables()
                     .Build();
 
-            var optionsBuilder = new DbContextOptionsBuilder<BackgroundProcessorDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<BankDbContext>();
             optionsBuilder.UseSqlServer(configurations.GetConnectionString("SQL"));
 
-            return new BackgroundProcessorDbContext(optionsBuilder.Options);
+            return new BankDbContext(optionsBuilder.Options);
         }
     }
 }

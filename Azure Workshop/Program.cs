@@ -1,6 +1,9 @@
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
+using Azure_Workshop;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,9 @@ builder.Services.AddAzureClients(clientsBuilder =>
 {
     clientsBuilder.AddServiceBusClient(builder.Configuration["ServiceBus"]);
 });
+
+builder.Services.AddDbContext<BankDbContext>(
+        options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQL")));
 
 var app = builder.Build();
 

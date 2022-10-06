@@ -4,18 +4,16 @@ using Background_Processor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Background_Processor.Migrations
+namespace Azure_Workshop.Migrations
 {
-    [DbContext(typeof(BackgroundProcessorDbContext))]
-    [Migration("20221005080048_test")]
-    partial class test
+    [DbContext(typeof(BankDbContext))]
+    partial class BankDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

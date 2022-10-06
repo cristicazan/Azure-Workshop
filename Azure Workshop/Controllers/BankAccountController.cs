@@ -2,6 +2,7 @@ using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Azure_Workshop.Controllers
@@ -29,20 +30,26 @@ namespace Azure_Workshop.Controllers
         private readonly ServiceBusClient _serviceBusClient;
         private readonly BlobContainerClient _blobContainerClient;
         private readonly TelemetryClient _telemetryClient;
+        private readonly BankDbContext _bankDbContext;
 
-        public BankAccountController(ServiceBusClient serviceBusClient, IConfiguration configuration, TelemetryClient telemetryClient)
+        public BankAccountController(ServiceBusClient serviceBusClient, IConfiguration configuration, TelemetryClient telemetryClient, BankDbContext bankDbContext)
         {
             _serviceBusClient = serviceBusClient;
             _blobContainerClient = new BlobContainerClient(configuration.GetConnectionString("StorageAccount"), "transactions");
             _telemetryClient = telemetryClient;
+            _bankDbContext = bankDbContext;
         }
 
         [HttpGet]
-        public IEnumerable<Transaction> GetTransactions()
+        public async Task<IEnumerable<Transaction>> GetTransactions()
         {
             _telemetryClient.TrackTrace("Hello from here");
 
-            return Enumerable.Range(1, 10).Select(GetRandomTransaction).ToArray();
+            var transactions = await _bankDbContext.Transactions
+                .Select(t => new Transaction { Date = t.Date, Name = t.Name, Value = t.Value })
+                .ToArrayAsync();
+
+            return transactions;
         }
 
         [HttpPost]

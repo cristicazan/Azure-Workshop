@@ -1,5 +1,6 @@
 ﻿using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
+using Azure_Workshop;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
@@ -26,7 +27,7 @@ namespace Background_Processor
                 options.ConnectionString = configuration["AppInsights"];
             });
 
-            builder.Services.AddDbContext<BackgroundProcessorDbContext>(
+            builder.Services.AddDbContext<BankDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("SQL")));
         }
 

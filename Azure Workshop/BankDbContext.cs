@@ -1,21 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
+using System.Collections.Generic;
 
-namespace Background_Processor
+namespace Azure_Workshop
 {
-    public class BackgroundProcessorDbContext : DbContext
+    public class BankDbContext : DbContext
     {
         public DbSet<TransactionDao> Transactions { get; set; }
 
-        public BackgroundProcessorDbContext(DbContextOptions<BackgroundProcessorDbContext> options)
+        public BankDbContext(DbContextOptions<BankDbContext> options)
         : base(options)
         {
         }
-
-        //public BackgroundProcessorDbContext()
-        //{
-
-        //}
     }
 
     public class TransactionDao

@@ -14,13 +14,13 @@ namespace Background_Processor
     public class ReceiveMessageTransactionFunction
     {
         private readonly ServiceBusClient _serviceBusClient;
-        private readonly BackgroundProcessorDbContext _backgroundProcessorDb;
+        private readonly BankDbContext _bankProcessorDb;
         private readonly TelemetryClient _telemetryClient;
 
-        public ReceiveMessageTransactionFunction(ServiceBusClient serviceBusClient, BackgroundProcessorDbContext backgroundProcessorDbContext, TelemetryClient telemetryClient)
+        public ReceiveMessageTransactionFunction(ServiceBusClient serviceBusClient, BankDbContext bankProcessorDbContext, TelemetryClient telemetryClient)
         {
             _serviceBusClient = serviceBusClient;
-            _backgroundProcessorDb = backgroundProcessorDbContext;
+            _bankProcessorDb = bankProcessorDbContext;
             _telemetryClient = telemetryClient;
         }
 
@@ -39,9 +39,9 @@ namespace Background_Processor
 
             var transaction = JsonSerializer.Deserialize<Transaction>(message.Body.ToString());
 
-            await _backgroundProcessorDb.AddAsync(new TransactionDao { Id = Guid.NewGuid(), Date = transaction.Date, Name = transaction.Name, Value = transaction.Value });
+            await _bankProcessorDb.AddAsync(new TransactionDao { Id = Guid.NewGuid(), Date = transaction.Date, Name = transaction.Name, Value = transaction.Value });
 
-            await _backgroundProcessorDb.SaveChangesAsync();
+            await _bankProcessorDb.SaveChangesAsync();
 
             return transaction;
         }
